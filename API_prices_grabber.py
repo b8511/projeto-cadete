@@ -9,6 +9,19 @@ def CoingeckoAPI_prices(coin):
     elif data_de_preco.status_code == 429:
         time.sleep(1)
         CoingeckoAPI_prices(coin)
+    # elif data_de_preco.status_code >= 400 and data_de_preco.status_code < 500:
+    #    raise CoinNotFoundError
+    # elif data_de_preco.status_code >= 500:
+    #    raise ServerError
+    #
+    # Apagar else abaixo
     else:
         print (data_de_preco)
         return False
+    
+
+# class CoinNotFoundError(Exception):
+#     pass
+
+# class ServerError(Exception):
+#     pass
