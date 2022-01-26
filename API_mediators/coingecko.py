@@ -2,6 +2,8 @@ import requests
 import time
 from API_mediators.exceptions import CoinNotFoundError
 from API_mediators.exceptions import ServerError
+from API_mediators.exceptions import NoValueError
+
 
 class CoingeckoAPI ():
     def __init__ (self):
@@ -10,8 +12,11 @@ class CoingeckoAPI ():
         price_data = requests.get("https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd" .format(coin_id = coin["id"]))
         if price_data.status_code >= 200 and price_data.status_code < 299 :
             price_data = requests.get("https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd" .format(coin_id = coin["id"])).json()
-            return (price_data[coin["id"]]["usd"])
-        elif price_data.status_code == 429:
+            if not "usd" in price_data[coin["id"]]:
+                raise NoValueError 
+            else:
+                return (price_data[coin["id"]]["usd"])
+        elif price_data.status_code == 429:              
             raise ServerError
         elif price_data.status_code >= 400 and price_data.status_code < 500:
             raise CoinNotFoundError
