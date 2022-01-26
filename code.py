@@ -55,7 +55,7 @@ def main():
                 should_ignore = True                                
             except ServerError:                                         # on server error retries three times
                 retries = retries + 1
-            except NoValueError:
+            except NoValueError:                                        #value did not exist, then jump to the next
                 should_ignore = True
             else:
                 print ("{} : {} $" .format(coin["name"],str(coin_value)))       # print it in the terminal

@@ -15,11 +15,11 @@ class CoingeckoAPI ():
             if not "usd" in price_data[coin["id"]]:
                 raise NoValueError 
             else:
-                return (price_data[coin["id"]]["usd"])
+                return (price_data[coin["id"]]["usd"])   #print
         elif price_data.status_code == 429:              
             raise ServerError
         elif price_data.status_code >= 400 and price_data.status_code < 500:
-            raise CoinNotFoundError
+            raise CoinNotFoundError             
         elif price_data.status_code >= 500:
             raise ServerError
 
