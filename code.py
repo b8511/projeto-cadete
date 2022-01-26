@@ -3,6 +3,7 @@ import time
 from API_mediators.coingecko import CoingeckoAPI 
 from API_mediators.exceptions import CoinNotFoundError
 from API_mediators.exceptions import ServerError
+from API_mediators.exceptions import NoValueError
 
 
 """
@@ -54,6 +55,8 @@ def main():
                 should_ignore = True                                
             except ServerError:                                         # on server error retries three times
                 retries = retries + 1
+            except NoValueError:
+                should_ignore = True
             else:
                 print ("{} : {} $" .format(coin["name"],str(coin_value)))       # print it in the terminal
                 break
