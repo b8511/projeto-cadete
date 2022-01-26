@@ -1,7 +1,8 @@
 import requests
 import time
-from API_coins_grabber import CoingeckoAPI_list 
-from API_prices_grabber import CoingeckoAPI_prices
+from API_mediators.coingecko import CoingeckoAPI 
+from API_mediators.exceptions import CoinNotFoundError
+from API_mediators.exceptions import ServerError
 
 
 """
@@ -39,23 +40,27 @@ E nesta função, dás handle desses erros, de maneira mais explicita:
 -Caso recebas um ServerError -> Dás retry mais N vezes.
 
 """
+def main():
+    coins_dictionary = CoingeckoAPI.coingecko_api_list()
 
-dicionario_de_coins = CoingeckoAPI_list()
-if dicionario_de_coins:
-    for coin in dicionario_de_coins:
-        # retries = 0
-        # should_ignore = False
-        # while retries < 3 and not should_ignore:
-        #     try:
-        time.sleep(0.3)
-        valor_de_moeda = CoingeckoAPI_prices(coin)
-        # Comentar este if
-        if valor_de_moeda == False:
-            break
-        else:
-            print(coin["name"] + " : %s $" %(str(valor_de_moeda)))
-        #     except CoinNotFoundError:
-        #         should_ignore = True
-        # except ServerError:
-        #     retries = retries + 1
+    for coin in coins_dictionary:
+        retries = 0
+        should_ignore = False
+        while retries < 3 and not should_ignore:
+            time.sleep(1)                                               # 1 second on hold for each try 
+            try:
+                coin_value = CoingeckoAPI.coingecko_api_prices(coin)    # get coin's value
+            except CoinNotFoundError:                                   # jumps to the next coin
+                should_ignore = True                                
+            except ServerError:                                         # on server error retries three times
+                retries = retries + 1
+            else:
+                print ("{} : {} $" .format(coin["name"],str(coin_value)))       # print it in the terminal
+                break
+        if retries >=3 :                                                # in case of not responding on the third time Stop fetching
+            print ("Server Error")
+            break        
 
+if __name__ == "__main__":
+    main()
+    
