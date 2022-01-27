@@ -50,7 +50,7 @@ def main():
         while retries < 3 and not should_ignore:
             time.sleep(1)                                               # 1 second on hold for each try 
             try:
-                coin_value = CoingeckoAPI.coingecko_api_prices(coin)    # get coin's value
+                coin_value = CoingeckoAPI.coingecko_api_prices(coin["id"])    # get coin's value
             except CoinNotFoundError:                                   # jumps to the next coin
                 should_ignore = True                                
             except ServerError:                                         # on server error retries three times
